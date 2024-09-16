@@ -12,8 +12,7 @@ export async function logInToDockerRegistry(
   { server, username, password }: DockerRegistry,
 ) {
   console.log(
-    `Logging in to Docker registry${server ? ` at  ${server}` : ""}${
-      username ? ` with username ${username}` : ""
+    `Logging in to Docker registry${server ? ` at  ${server}` : ""}${username ? ` with username ${username}` : ""
     }...`,
   );
 

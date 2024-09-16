@@ -1,6 +1,9 @@
 {
   "name": "deploy-tool",
   "module": "index.ts",
+  "scripts": {
+    "deploy": "bun run /index.ts deploy"
+  },
   "devDependencies": {
     "@biomejs/biome": "1.7.0",
     "@types/bun": "latest"

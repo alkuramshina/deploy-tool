@@ -1,7 +1,7 @@
 import { Clerc, helpPlugin, versionPlugin } from "clerc";
 import { deploy } from "./commands/deploy";
 import { setup } from "./commands/setup";
-import { ssh } from "./utils/ssh";
+import { setSshPass, ssh } from "./utils/ssh";
 
 Clerc.create()
   .scriptName("deploytool")
@@ -18,6 +18,22 @@ Clerc.create()
         default: "root",
         description: "SSH user",
       },
+      sshPassword: {
+        type: String,
+        description: "SSH pass",
+      },
+      interactive: {
+        alias: "i",
+        type: Boolean,
+        default: false,
+        description: "Interactive mode",
+      },
+      verbose: {
+        alias: "v",
+        type: Boolean,
+        default: false,
+        description: "Verbose mode",
+      }
     },
   })
   .command("deploy", "Deploy a new version of a service", {
@@ -40,6 +56,21 @@ Clerc.create()
         default: "root",
         description: "SSH user",
       },
+      sshPassword: {
+        type: String,
+        description: "SSH pass",
+      },
+      interactive: {
+        alias: "i",
+        type: Boolean,
+        default: false,
+        description: "Interactive mode",
+      },
+      verbose: {
+        type: Boolean,
+        default: false,
+        description: "Verbose mode",
+      },
       environment: {
         alias: "e",
         type: [String],
@@ -61,15 +92,19 @@ Clerc.create()
   })
   .on("setup", async (context) => {
     const { ip } = context.parameters;
-    const { sshUser } = context.flags;
+    const { sshUser, interactive, sshPassword, verbose } = context.flags;
 
-    await setup(ssh(ip, sshUser), { ip });
+    setSshPass(sshPassword);
+
+    await setup(ssh(ip, sshUser, interactive, verbose), { ip });
   })
   .on("deploy", async (context) => {
     const { ip, domain, image, name } = context.parameters;
-    const { port, path, sshUser, environment } = context.flags;
+    const { port, path, sshUser, interactive, verbose, sshPassword, environment } = context.flags;
 
-    await deploy(ssh(ip, sshUser), {
+    setSshPass(sshPassword);
+
+    await deploy(ssh(ip, sshUser, interactive, verbose), {
       domain,
       image,
       name,
